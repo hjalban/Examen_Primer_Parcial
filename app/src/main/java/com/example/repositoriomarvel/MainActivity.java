@@ -22,11 +22,12 @@ public class MainActivity extends AppCompatActivity {
 
         btnBuscarHeroes = findViewById(R.id.btnSearcHeroes);
         searchViewHeroes = findViewById(R.id.searchViewHeroes);
+        //searchViewHeroes.setIconifiedByDefault(true);
+        //searchViewHeroes.setFocusable(true);
+        //searchViewHeroes.setIconified(false);
+        //searchViewHeroes.requestFocusFromTouch();
 
         buscarHeroes();
-
-
-
     }
 
     public void buscarHeroes(){
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //buscarHeroe();
                 if (!searchViewHeroes.getQuery().toString().equals("")){
-                    System.out.println("hola: " + searchViewHeroes.getQuery());
+                    //System.out.println("hola: " + searchViewHeroes.getQuery());
                     Intent intent = new Intent(MainActivity.this, ResultadoBusqueda.class);
                     String message = (String) searchViewHeroes.getQuery().toString();
                     intent.putExtra(EXTRA_MESSAGE, message);

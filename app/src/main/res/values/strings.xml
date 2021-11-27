@@ -10,4 +10,7 @@
     <string name="heroesEncontradosNum">Resultado: </string>
     <string name="noResultadosBusqueda">Buscar Héores</string>
     <string name="scrollView">se añade scrollView para que quepan todos los resultados de la busqueda</string>
+    <string name="habilidades">Habilidades</string>
+    <string name="superHeroeName">superHeroeName</string>
+    <string name="superHeroeIdentity">superHeroeIdentity</string>
 </resources>

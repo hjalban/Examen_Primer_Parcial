@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,6 +30,7 @@ public class ResultadoBusqueda extends AppCompatActivity {
     // result example: https://www.superheroapi.com/api.php/4455601557858712/search/batman
     String urlHeroe =  "https://www.superheroapi.com/api.php/4455601557858712/search/batman";
     String urlSearchResult = "https://www.superheroapi.com/api.php/4455601557858712/search/";
+    public static final String EXTRA_MESSAGE_2 = "habilidadesHeroe";
 
     private ListView mListView;
     private ArrayAdapter aAdapter;
@@ -44,7 +47,7 @@ public class ResultadoBusqueda extends AppCompatActivity {
 
         Intent intent = getIntent();
         urlSearchResult = urlSearchResult + intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        System.out.println("urlSearchResult: " + urlSearchResult);
+        //System.out.println("urlSearchResult: " + urlSearchResult);
 
 
         //aAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, users); // last parameter is a simple string list
@@ -52,46 +55,6 @@ public class ResultadoBusqueda extends AppCompatActivity {
 
         new MyTask().execute();
 
-    }
-
-    //
-
-    public void GetHeoreJson(){
-        try {
-            URL url = new URL(urlSearchResult);
-
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.connect();
-
-            //Getting the response code
-            int responsecode = conn.getResponseCode();
-
-            if (responsecode != 200) {
-                throw new RuntimeException("HttpResponseCode: " + responsecode);
-            } else {
-
-                String inline = "";
-                Scanner scanner = new Scanner(url.openStream());
-
-                //Write all the JSON data into a string using a scanner
-                while (scanner.hasNext()) {
-                    inline += scanner.nextLine();
-                }
-
-                //Close the scanner
-                scanner.close();
-
-                System.out.println(inline);
-
-                //Using the JSON simple library parse the string into a json object
-                //JSONParser parse = new JSONParser();
-                //JSONObject data_obj = (JSONObject) parse.parse(inline);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private class MyTask extends AsyncTask<Void, Void, Void> {
@@ -110,8 +73,6 @@ public class ResultadoBusqueda extends AppCompatActivity {
                 bufferedReader.close();
                 result = string;
                 ///
-                System.out.println("json string" + result);
-
             } catch (IOException e){
                 e.printStackTrace();
                 result = e.toString();
@@ -124,10 +85,9 @@ public class ResultadoBusqueda extends AppCompatActivity {
             JSONObject jsonResultadosAPI = null;
             try {
                 jsonResultadosAPI = new JSONObject(result);
-                System.out.println("json obj" + jsonResultadosAPI);
                 JSONArray heroesArray = jsonResultadosAPI.getJSONArray("results");
 
-                // si hay resultados
+                // si hay resultados entonces se mostraran en el listView
                 if (heroesArray.length() >0 ){
                     arrayHeroesNames = new String[heroesArray.length()];
                     for (int i = 0; i< heroesArray.length() ; i++ )
@@ -135,17 +95,47 @@ public class ResultadoBusqueda extends AppCompatActivity {
                         arrayHeroesNames[i] = heroesArray.getJSONObject(i).getString("name");
                     }
 
-                    //JSONObject heroeJson = heroesArray.getJSONObject(0);
-                    //String idHeroe = heroeJson.getString("id");
-                    //System.out.println("json heroe ID: " + idHeroe);
-
-                    // set textview con infor de heroes enocntrados
+                    // set textview con info del numero de heroes enocntrados
                     String heroesEncontrados ="Resultados: "+ heroesArray.length() ;
                     textViewHeroesEncontrados.setText(heroesEncontrados);
 
-                    // modify list view
+                    // actualizar list view
                     aAdapter = new ArrayAdapter(ResultadoBusqueda.this, android.R.layout.simple_list_item_1, arrayHeroesNames); // last parameter is a simple string list
                     mListView.setAdapter(aAdapter);
+
+                    // interactive list view
+                    mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+                            Intent intent = new Intent(ResultadoBusqueda.this, EstadisticaHeroe.class);
+                            String message = " ";
+                            try {
+                                //System.out.println("heroe: " + heroesArray.getJSONObject(position).toString());
+                                message = heroesArray.getJSONObject(position).getString("name");
+                                message +=",";
+                                message += heroesArray.getJSONObject(position).getJSONObject("biography").getString("full-name");
+                                message +=",";
+                                message += heroesArray.getJSONObject(position).getJSONObject("image").getString("url");
+                                message +=" ,";
+                                message += heroesArray.getJSONObject(position).getJSONObject("powerstats").getString("intelligence");
+                                message +=",";
+                                message += heroesArray.getJSONObject(position).getJSONObject("powerstats").getString("strength");
+                                message +=",";
+                                message += heroesArray.getJSONObject(position).getJSONObject("powerstats").getString("speed");
+                                message +=",";
+                                message += heroesArray.getJSONObject(position).getJSONObject("powerstats").getString("durability");
+                                message +=",";
+                                message += heroesArray.getJSONObject(position).getJSONObject("powerstats").getString("power");
+                                message +=",";
+                                message += heroesArray.getJSONObject(position).getJSONObject("powerstats").getString("combat");
+                                //System.out.println("message: " + message);
+                                // heroesName, full-name, url, intelligence, strength, speed, durability, power, combat
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            intent.putExtra(EXTRA_MESSAGE_2, message);
+                            startActivity(intent);
+                        }
+                    });
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
