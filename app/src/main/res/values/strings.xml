@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Repositorio Marvel</string>
+    <string name="materiaName">Aplicaciones moviles y sistemas telemáticos</string>
+    <string name="examen">Examen práctico</string>
+    <string name="integrantes">Hugo Albán y Carlos Tupac</string>
+    <string name="busqueda">Busqueda por nombre</string>
+    <string name="btnBuscar">Buscar Héores</string>
+    <string name="resultadosBusqueda">Buscar Héores</string>
+    <string name="heroesEncontradosTxt">Resultado: </string>
+    <string name="heroesEncontradosNum">Resultado: </string>
+    <string name="noResultadosBusqueda">Buscar Héores</string>
+    <string name="scrollView">se añade scrollView para que quepan todos los resultados de la busqueda</string>
+</resources>
